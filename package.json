@@ -4,7 +4,7 @@
   "description": "Note Taking Web Application",
   "main": "server.js",
   "engines": {
-    "node": "12.13.0"
+    "node": "12.14.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
