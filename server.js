@@ -20,23 +20,34 @@ app.get('/notes', (req, res) => {
 })
 
 
-app.delete('api/notes/:id', (req, res) => {
-  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+
+
+app.delete('/api/notes/:id', (req, res) => {
+
+  data = fs.readFileSync('./db/db.json', 'utf8')
+  const notes = JSON.parse(data)
+  let newData = notes.filter(note => {
+    return note.id == req.params.id;
+  })[0];
+
+  const index = notes.indexOf(newData);
+
+  notes.splice(index, 1);
+  fs.writeFile('./db/db.json', JSON.stringify(notes), err => {
     if (err) { console.log(err) }
-    const notes = JSON.parse(data)
-    notes.filter(note => note.title !== req.params.item[0])
-    fs.writeFileSync('./db/db.json', JSON.stringify(notes, null, 2));
-    console.log(notes)
-    // res.json(notes.filter(note => note.title === req.params.item)[0])
-    // console.log(notes)
+    res.sendStatus(200)
   })
+
+
 })
 
 app.post('/api/notes', (req, res) => {
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) { console.log(err) }
     const notes = JSON.parse(data)
-    notes.push(req.body)
+    let lastItem = notes[notes.length - 1]
+    let item = { title: req.body.title, text: req.body.text, id: lastItem.id + 1 }
+    notes.push(item)
     fs.writeFile('./db/db.json', JSON.stringify(notes), err => {
       if (err) { console.log(err) }
       res.sendStatus(200)
